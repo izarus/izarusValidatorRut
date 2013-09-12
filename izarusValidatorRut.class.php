@@ -7,6 +7,10 @@
  * Basado en el trabajo de Francisco Salazar.
  * Adaptado por David Vega para Izarus.
  *
+ * Options:
+ *   required     boolean   Si el valor es obligatorio. Default: TRUE
+ *   con_guion    boolean   Si el valor devuelto incluye el guión o no. Ej. 12345678-9. Default: TRUE
+ *   trim         boolean   Si debe eliminar espacios sobrantes antes de evaluar. Default: TRUE
  */
 class izarusValidatorRut extends sfValidatorBase
 {
@@ -23,7 +27,13 @@ class izarusValidatorRut extends sfValidatorBase
     $this->addOption('con_guion',true);
   }
 
+  /**
+   * Limpia el valor recibido
+   * @param  string $value RUT sin limpiar ni validar
+   * @return string        RUT limpio y validado
+   */
   protected function doClean($value) {
+
     $rut = strtoupper(preg_replace('/[^0-9kK]/','',(string) $value));
 
     $r = substr($rut,0,strlen($rut)-1);
