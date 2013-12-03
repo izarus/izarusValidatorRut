@@ -10,7 +10,6 @@
  * Options:
  *   required     boolean   Si el valor es obligatorio. Default: TRUE
  *   con_guion    boolean   Si el valor devuelto incluye el guión o no. Ej. 12345678-9. Default: TRUE
- *   trim         boolean   Si debe eliminar espacios sobrantes antes de evaluar. Default: TRUE
  */
 class izarusValidatorRut extends sfValidatorBase
 {
@@ -24,6 +23,7 @@ class izarusValidatorRut extends sfValidatorBase
     $this->setMessage('invalid','El RUT "%value%" no es válido');
     $this->setMessage('required','Requerido.');
     $this->setOption('trim',true);
+    $this->setOption('empty_value','');
     $this->addOption('con_guion',true);
   }
 
@@ -36,10 +36,13 @@ class izarusValidatorRut extends sfValidatorBase
 
     $rut = strtoupper(preg_replace('/[^0-9kK]/','',(string) $value));
 
+    if (strlen($rut) < 8)
+      throw new sfValidatorError($this, 'invalid', array('value' => $value));
+
     $r = substr($rut,0,strlen($rut)-1);
     $dv = substr($rut,-1);
 
-    $clean = ($this->getOption('con_guion') == true)? $r.'-'.$dv:$r.$dv;
+    $clean = ($this->getOption('con_guion'))? $r.'-'.$dv:$r.$dv;
 
     $s=1;
     for($m=0;$r!=0;$r/=10)
@@ -50,6 +53,6 @@ class izarusValidatorRut extends sfValidatorBase
     if($dv != (string) chr($s?$s+47:75))
       throw new sfValidatorError($this, 'invalid', array('value' => $value));
 
-    return $clean;
+    return (string) $clean;
   }
 }
