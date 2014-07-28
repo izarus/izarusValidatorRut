@@ -34,9 +34,13 @@ class izarusValidatorRut extends sfValidatorBase
    */
   protected function doClean($value) {
 
+    if(preg_match('/[^0-9kK.-]/', (string) $value)){
+      throw new sfValidatorError($this, 'invalid', array('value' => $value));
+    }
+
     $rut = strtoupper(preg_replace('/[^0-9kK]/','',(string) $value));
 
-    if (strlen($rut) < 8)
+    if (strlen($rut) < 8 || strlen($rut) > 10)
       throw new sfValidatorError($this, 'invalid', array('value' => $value));
 
     $r = substr($rut,0,strlen($rut)-1);
